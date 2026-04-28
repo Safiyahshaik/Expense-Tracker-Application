@@ -2,11 +2,15 @@
 
 A React Native mobile application built with Expo for tracking personal expenses.
 
-## Running Tests
-
 ### Install dependencies
 
 npm install
+
+### run project
+
+npx expo start --clear
+
+## Running Tests
 
 ### Run all tests
 
