@@ -1,50 +1,97 @@
-# Welcome to your Expo app 👋
+# MDExpenseTracker
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A React Native mobile application built with Expo for tracking personal expenses.
 
-## Get started
+## Running Tests
 
-1. Install dependencies
+### Install dependencies
 
-   ```bash
-   npm install
-   ```
+npm install
 
-2. Start the app
+### Run all tests
 
-   ```bash
-   npx expo start
-   ```
+npm test
 
-In the output, you'll find options to open the app in a
+### Run tests with coverage report
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+npm test -- --coverage
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Test Structure
 
-## Get a fresh project
+MDExpenseTracker/
+└── tests/
+    ├── categoryTotals.test.ts          
+    ├── expenses.test.ts                
+    ├── location.test.ts                
+    ├── imagePicker.test.ts             
+    └── integration.addExpenseFlow.test.ts  
 
-When you're ready, run:
+## What is Tested
 
-```bash
-npm run reset-project
+### Unit Tests
+
+**categoryTotals.test.ts**
+Tests the `getCategoryTotals` utility function.
+- Empty expense list
+- Single and multiple categories
+- Missing category falls back to "Other"
+- Decimal amounts
+- Case sensitivity
+
+**expenses.test.ts**
+Tests the `addExpense` utility function.
+- Throws error when user is not logged in
+- Saves correct data to Firestore
+- Handles optional fields (location, image, notes)
+- Propagates Firestore errors
+
+**location.test.ts**
+Tests the `getCurrentLocation` utility function.
+- Throws when permission is denied
+- Returns correct coordinates
+- Builds location name from district, subregion or street
+- Requests high accuracy GPS
+
+**imagePicker.test.ts**
+Tests the `pickImage` and `takePhoto` utility functions.
+- Throws when permission is denied
+- Returns null when user cancels
+- Returns correct image URI
+- Verifies correct launch options
+
+### Integration Tests
+
+**integration.addExpenseFlow.test.ts**
+Tests the full add expense workflow across multiple utilities.
+- Complete flow: location → image → save expense
+- Auth guard blocks unauthenticated saves
+- Expense saves without location when permission denied
+- Expense saves without image when user cancels
+- Multiple expenses saved in same session
+- Firestore failure handled mid-flow
+
+## Why Mocking is Used
+
+All external dependencies are mocked in tests:
+
+- **Firebase/Firestore** — prevents real database writes
+- **AsyncStorage** — prevents real device storage access
+- **expo-location** — prevents real GPS hardware access
+- **expo-image-picker** — prevents real camera/gallery access
+
+This ensures tests are fast, reliable and run on any machine
+including CI/CD servers with no phone hardware.
+
+## Test Results
+
+All 45 tests pass across 5 test suites.
 ```
+PASS  tests/categoryTotals.test.ts
+PASS  tests/expenses.test.ts
+PASS  tests/imagePicker.test.ts
+PASS  tests/integration.addExpenseFlow.test.ts
+PASS  tests/location.test.ts
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Tests: 45 passed, 45 total
+Test Suites: 5 passed, 5 total
+```

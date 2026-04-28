@@ -1,24 +1,47 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+import { useEffect, useState } from "react";
+import { Stack } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { View, Text } from "react-native";
+import { ThemeProvider } from "../context/ThemeContext";
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<string | null>(null);
 
+  useEffect(() => {
+    const checkUser = async () => {
+      const uid = await AsyncStorage.getItem("user");
+      console.log("RootLayout UID:", uid);
+
+      setUser(uid);
+      setLoading(false);
+    };
+
+    checkUser();
+  }, []);
+
+  // Loading screen
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
+  // Wrap navigation stack in ThemeProvider
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+    <ThemeProvider>
+      <Stack screenOptions={{ headerShown: false }}>
+        {user ? (
+          <Stack.Screen name="(tabs)" />
+        ) : (
+          <>
+            <Stack.Screen name="login" />
+            <Stack.Screen name="register" />
+          </>
+        )}
       </Stack>
-      <StatusBar style="auto" />
     </ThemeProvider>
   );
 }
