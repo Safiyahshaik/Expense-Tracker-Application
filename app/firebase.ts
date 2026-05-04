@@ -10,12 +10,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getStorage } from "firebase/storage";
 // Firebase config
 const firebaseConfig = {
-  apiKey: "",
+  apiKey: "AIzaSyDRHFNz5NPfMre8EFVcWhP7IAm8C2an4Uc",
   authDomain: "expense-tracker-b6105.firebaseapp.com",
   projectId: "expense-tracker-b6105",
   storageBucket: "expense-tracker-b6105.firebasestorage.app",
   messagingSenderId: "890169552075",
-  appId: "",
+  appId: "1:890169552075:web:fb691af884f32dcb0a3f4e",
   measurementId: "G-GTHNN92K6Z",
 };
 
